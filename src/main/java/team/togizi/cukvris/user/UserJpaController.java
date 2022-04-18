@@ -3,7 +3,6 @@ package team.togizi.cukvris.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -39,7 +38,7 @@ public class UserJpaController {
         return user.get(); // .get()은 Optional에서 가져옴
     }
 
-    // 사용자 추가
+    // 사용자 추가(회원 가입)
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user)
     {
@@ -51,5 +50,35 @@ public class UserJpaController {
                 .toUri(); // Uri화 함
 
         return ResponseEntity.created(location).build();
+    }
+    // 회원 정보 수정
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException(String.format("ID[%s} not found", id));
+        }
+
+        User storedUser = optionalUser.get();
+        ///수정할 정보 입력
+        storedUser.setUserId(user.getUserId());
+        storedUser.setUserPwd(user.getUserPwd());
+        storedUser.setVeganLevel(user.getVeganLevel());
+        storedUser.setEmail(user.getEmail());
+
+        User updatedUser = userRepository.save(storedUser);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(updatedUser.getUserIdx())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+    //회원 탈퇴
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userRepository.deleteById(id);
     }
 }

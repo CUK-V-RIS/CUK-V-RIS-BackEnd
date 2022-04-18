@@ -16,30 +16,8 @@ import java.util.Date;
 @Entity(name="user")
 public class User {
 
-    /*
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(nullable = false)
-    private Date joinDate;
-
-    //@Size(min = 2, message = "Name은 2글자 이상 입력해주세요.")
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private Integer veganLevel;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-     */
-    @Id
-    @GeneratedValue
     private Integer userIdx;
 
     @Column(name = "userId")
