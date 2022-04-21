@@ -16,8 +16,8 @@ import java.util.Date;
 @Entity(name="user")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id     // primary key 설정
+    @GeneratedValue(strategy = GenerationType.IDENTITY)    // 자동 증가
     private Integer userIdx;
 
     @Column(name = "userId")

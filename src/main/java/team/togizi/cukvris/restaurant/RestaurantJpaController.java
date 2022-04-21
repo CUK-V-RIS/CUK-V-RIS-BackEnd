@@ -27,7 +27,19 @@ public class RestaurantJpaController {
 
 
     // 음식점 이름으로 검색
-    //@GetMapping("/restaurant/{resName}")
+    @GetMapping("/restaurantName/{resName}")
+    public List<Restaurant> searchByResName(@PathVariable String resName){
+        //List<Restaurant> restaurants=restaurantRepository.findByResNameContains(resName);
+
+        List<Restaurant> resList=restaurantRepository.findByResNameContains(resName);
+        if(resList.isEmpty()){
+            throw new ResNotFoundException(String.format("[%s] not found", resName));
+        }
+
+        return resList;
+
+
+    }
 
 
 
