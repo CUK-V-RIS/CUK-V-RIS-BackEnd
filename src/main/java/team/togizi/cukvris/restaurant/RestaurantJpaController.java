@@ -35,12 +35,7 @@ public class RestaurantJpaController {
         if(resList.isEmpty()){
             throw new ResNotFoundException(String.format("[%s] not found", resName));
         }
-
         return resList;
-
-
     }
-
-
 
 }
