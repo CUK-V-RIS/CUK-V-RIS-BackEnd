@@ -14,12 +14,5 @@ import java.util.Optional;
 public class RestaurantService {
     @Autowired
     private final RestaurantRepository restaurantRepository;
-/*
-    public List<Restaurant> searchByName(String resName){
 
-        List<Restaurant> resList=restaurantRepository.findByResNameContains(resName);
-        return resList;
-    }
-
-*/
 }
