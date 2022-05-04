@@ -18,9 +18,9 @@ public class ReviewJpaController {
 
     // 최근 나의 리뷰 조회
     @GetMapping("/{userIdx}/myReview")
-    public List<MyReviewInterface> checkMyReview(@PathVariable int userIdx){
+    public List<Object[]> checkMyReview(@PathVariable int userIdx){
 
-        List<MyReviewInterface> reviews=reviewRepository.findByUserIdx(userIdx);
+        List<Object[]> reviews=reviewRepository.findByUserIdx(userIdx);
 
         if(reviews.isEmpty()){
             throw new ReviewNotFoundException(String.format("작성한 리뷰가 없습니다."));

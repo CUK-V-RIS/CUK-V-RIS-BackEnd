@@ -13,5 +13,5 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value = "Select restaurant.res_name, review.review_category" +
             " From restaurant, review " +
             "where review.res_idx=restaurant.res_idx and review.user_idx= :userIdx", nativeQuery = true)
-    List<MyReviewInterface> findByUserIdx(@Param("userIdx") Integer userIdx);
+    List<Object[]> findByUserIdx(@Param("userIdx") Integer userIdx);
 }
