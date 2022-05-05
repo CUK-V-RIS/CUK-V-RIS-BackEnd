@@ -10,8 +10,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
-    @Query(value = "Select restaurant.res_name, review.review_category" +
-            " From restaurant, review " +
-            "where review.res_idx=restaurant.res_idx and review.user_idx= :userIdx", nativeQuery = true)
-    List<Object[]> findByUserIdx(@Param("userIdx") Integer userIdx);
+    @Query(value = "Select new team.togizi.cukvris.review.MyReview(res.resName, rev.reviewCategory) From restaurant res, review rev where rev.resIdx=res.resIdx and rev.userIdx= :userIdx")
+    List<MyReview> findByUserIdx(@Param("userIdx") Integer userIdx);
 }
