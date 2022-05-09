@@ -31,4 +31,7 @@ public class User {
 
     @Column(name = "veganLevel")
     private Integer veganLevel;
+
+    @Column(name = "userRole") // enum 쓰지말래서 0이면 접근 권한 x, 1이면 user, 2면 admin 뭐 이런식..
+    private Integer userRole;
 }
