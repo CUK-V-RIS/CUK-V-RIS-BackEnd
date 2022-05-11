@@ -2,10 +2,7 @@ package team.togizi.cukvris.restaurant;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,5 +34,33 @@ public class RestaurantJpaController {
         }
         return resList;
     }
+
+
+
+    // 음식점 필터로 조회
+    @GetMapping("/restaurant/filter")
+    public List<Restaurant> searchByFilter(@RequestBody List<Integer> filteredValue){
+
+        // ***findByResNameContains 부분 수정하기***
+        List<Restaurant> resFilterList=restaurantRepository.findByResNameContains("");
+
+        if(resFilterList.isEmpty()){
+            throw new ResNotFoundException(String.format("[%s] not found", filteredValue));
+        }
+
+        return resFilterList;
+    }
+
+
+    /*
+    프론트에서 데이터 받기 (JSON)
+    // 음식점 필터로 조회
+    @GetMapping("/restaurant/filter")
+    public List<Integer> searchByFilter(@RequestBody List<Integer> filteredValue){
+
+        List<Integer> resFilterList=filteredValue;
+        return resFilterList;
+    }
+    */
 
 }
