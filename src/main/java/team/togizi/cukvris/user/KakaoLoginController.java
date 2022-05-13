@@ -8,9 +8,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +32,7 @@ public class KakaoLoginController {
     @Autowired
     private UserRepository userRepository;
 
+    private static String access_Token = "";
     /*@ResponseBody
     @GetMapping("/kakao")
     public void kakaoCallback(@RequestParam String code) {
@@ -40,11 +44,23 @@ public class KakaoLoginController {
 
     @ResponseBody
     @GetMapping("/kakao")
-    public User createUserByKakao(@RequestParam String code) {
+    public User createUserByKakao(@RequestParam String code, HttpSession session) {
 
-        String access_Token = kakaoLoginService.getKaKaoAccessToken(code);
+        if(access_Token == "")
+            access_Token = kakaoLoginService.getKaKaoAccessToken(code);
+
         HashMap<String, Object> userInfo = kakaoLoginService.getUserInfo(access_Token);
         System.out.println("login Controller : " + userInfo);
+
+        //    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
+        if (userInfo.get("email") != null) {
+            session.setAttribute("userId", userInfo.get("email"));
+            session.setAttribute("access_Token", access_Token);
+        }
+        System.out.println("session_userId: " + session.getAttribute("userId"));
+        System.out.println("session_access_Token: " + session.getAttribute("access_Token"));
+
+        System.out.println(session);
 
         User user = new User();
         user.setUserId(userInfo.get("nickname").toString());
@@ -68,11 +84,25 @@ public class KakaoLoginController {
         }
         else
             return findUser.get();
-        /*//    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
-        if (userInfo.get("email") != null) {
-            session.setAttribute("userId", userInfo.get("email"));
-            session.setAttribute("access_Token", access_Token);
-        }*/
+
+    }
+    @ResponseBody
+    @GetMapping("/logout")
+    public String access(HttpSession session) throws IOException {
+
+        System.out.println(session);
+
+        String access_token = (String)session.getAttribute("access_Token");
+        System.out.println("access_Token: " + access_token);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("Authorization", "Bearer "+ access_token);
+
+        String result = kakaoLoginService.HttpPostConnection("https://kapi.kakao.com/v1/user/logout", map).toString();
+        System.out.println(result);
+
+        access_Token = "";
+
+        return "logout!";
     }
     @GetMapping("/kakao/users")
     public List<User> retrieveAllUsers() {
