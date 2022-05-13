@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +18,14 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("/v1/vegan-res")
 
-public class KakaoLoginController {
+public class KakaoController {
     /**
      * 카카오 callback
      * [GET] /oauth/kakao/callback
      */
 
     @Autowired
-    private KakaoLoginService kakaoLoginService;
+    private KakaoService kakaoService;
 
     @Autowired
     private UserRepository userRepository;
@@ -47,9 +45,9 @@ public class KakaoLoginController {
     public User createUserByKakao(@RequestParam String code, HttpSession session) {
 
         if(access_Token == "")
-            access_Token = kakaoLoginService.getKaKaoAccessToken(code);
+            access_Token = kakaoService.getKaKaoAccessToken(code);
 
-        HashMap<String, Object> userInfo = kakaoLoginService.getUserInfo(access_Token);
+        HashMap<String, Object> userInfo = kakaoService.getUserInfo(access_Token);
         System.out.println("login Controller : " + userInfo);
 
         //    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
@@ -62,8 +60,10 @@ public class KakaoLoginController {
 
         System.out.println(session);
 
+        String userId = userInfo.get("nickname").toString() + userInfo.get("email").toString();
+
         User user = new User();
-        user.setUserId(userInfo.get("nickname").toString());
+        user.setUserId(userId);
         user.setEmail(userInfo.get("email").toString());
 
         Optional<User> findUser = userRepository.findByUserId(user.getUserId());
@@ -88,21 +88,25 @@ public class KakaoLoginController {
     }
     @ResponseBody
     @GetMapping("/logout")
-    public String access(HttpSession session) throws IOException {
+    public Optional<User> access(HttpSession session) throws IOException {
 
         System.out.println(session);
+        HashMap<String, Object> userInfo = kakaoService.getUserInfo(access_Token);
+
+        String userId = userInfo.get("nickname").toString() + userInfo.get("email").toString();
+        Optional<User> findUser = userRepository.findByUserId(userId);
 
         String access_token = (String)session.getAttribute("access_Token");
         System.out.println("access_Token: " + access_token);
         Map<String, String> map = new HashMap<String, String>();
         map.put("Authorization", "Bearer "+ access_token);
 
-        String result = kakaoLoginService.HttpPostConnection("https://kapi.kakao.com/v1/user/logout", map).toString();
+        String result = kakaoService.HttpPostConnection("https://kapi.kakao.com/v1/user/logout", map).toString();
         System.out.println(result);
 
         access_Token = "";
 
-        return "logout!";
+        return findUser;
     }
     @GetMapping("/kakao/users")
     public List<User> retrieveAllUsers() {

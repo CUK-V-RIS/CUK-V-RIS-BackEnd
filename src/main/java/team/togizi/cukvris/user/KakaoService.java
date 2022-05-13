@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class KakaoLoginService {
+public class KakaoService {
 
     public String getKaKaoAccessToken(String code){
         String access_Token="";
