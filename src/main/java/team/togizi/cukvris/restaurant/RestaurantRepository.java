@@ -17,6 +17,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     @Query("SELECT r FROM restaurant r WHERE r.resName LIKE %:resName%")
     List<Restaurant> findByResNameContains(@Param("resName") String resName);
 
-    // 음식점 필터로 검색
+    // 음식점 필터로 검색 (지역)
+    // 수정해야됨
+    @Query("select r from restaurant r where r.resAddress in (:area)")
+    List<Restaurant> findRestaurantByFilterArea(@Param("area") List<String> resFilterListArea);
 
 }

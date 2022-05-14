@@ -67,16 +67,24 @@ public class RestaurantJpaController {
     // 프론트에서 데이터 받기 Test(JSON)
     // 현재 진행상황 : 프론트에서 배열로 정수들 받아서 문자열로 반환까지
     // 이제 저 리스트 크기만큼 반복문 돌려서 쿼리문에 추가하면 됨 - 근데 동적쿼리 개어려움ㅜ
+    // 문자열 리스트 1개 -> 지역, 비건단계, 음식점종류 3개로 나눔
     // 음식점 필터로 조회
     @GetMapping("/restaurant/filter")
     public List<String> searchByFilter(@RequestBody List<Integer> filteredValue){
 
-        List<Integer> resFilterListInteger = filteredValue;
-        List<String> resFilterListString = new ArrayList<>();
-        for(Integer i : resFilterListInteger){
-            resFilterListString.add(resFilterList[i]);
+        List<String> resFilterListArea = new ArrayList<>();
+        List<String> resFilterListLevel = new ArrayList<>();
+        List<String> resFilterListType = new ArrayList<>();
+        for(Integer i : filteredValue){
+            if(i <= 24)
+                resFilterListArea.add(resFilterList[i]);
+            else if(i <= 31)
+                resFilterListLevel.add(resFilterList[i]);
+            else if(i <= 41)
+                resFilterListType.add(resFilterList[i]);
         }
-        return resFilterListString;
+
+        return resFilterListLevel;
     }
 */
 
