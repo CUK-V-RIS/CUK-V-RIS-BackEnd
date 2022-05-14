@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,16 @@ import java.util.Optional;
 public class RestaurantJpaController {
     @Autowired
     private RestaurantRepository restaurantRepository;
+
+    // 0 ~ 24 : 지역
+    // 25 ~ 31 : 비건단계
+    // 32 ~ 41 : 음식점 타입
+    String resFilterList[]=new String[]{"강남구", "강동구", "강서구", "강북구",
+    "관악구", "광진구", "구로구", "금천구", "노원구", "동대문구", "도봉구", "동작구", "마포구",
+    "서대문구", "성동구", "성북구", "서초구", "송파구", "영등포구", "용산구", "양천구",
+    "은평구", "종로구", "중구", "중랑구",
+    "비건", "락토", "오보", "락토 오보", "페스코", "폴로", "플렉시테리언",
+    "한식", "분식", "카페", "베이커리", "양식", "술집", "인도", "중식", "동남아", "일식"};
 
     // 음식점 한 개 조회
     @GetMapping("/restaurant/{id}")
@@ -52,15 +63,21 @@ public class RestaurantJpaController {
     }
 
 
-    /*
-    프론트에서 데이터 받기 (JSON)
+/*
+    // 프론트에서 데이터 받기 Test(JSON)
+    // 현재 진행상황 : 프론트에서 배열로 정수들 받아서 문자열로 반환까지
+    // 이제 저 리스트 크기만큼 반복문 돌려서 쿼리문에 추가하면 됨 - 근데 동적쿼리 개어려움ㅜ
     // 음식점 필터로 조회
     @GetMapping("/restaurant/filter")
-    public List<Integer> searchByFilter(@RequestBody List<Integer> filteredValue){
+    public List<String> searchByFilter(@RequestBody List<Integer> filteredValue){
 
-        List<Integer> resFilterList=filteredValue;
-        return resFilterList;
+        List<Integer> resFilterListInteger = filteredValue;
+        List<String> resFilterListString = new ArrayList<>();
+        for(Integer i : resFilterListInteger){
+            resFilterListString.add(resFilterList[i]);
+        }
+        return resFilterListString;
     }
-    */
+*/
 
 }
