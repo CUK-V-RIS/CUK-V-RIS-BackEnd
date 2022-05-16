@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,31 +51,19 @@ public class RestaurantJpaController {
 
     // 음식점 필터로 조회
     @GetMapping("/restaurant/filter")
-    public List<Restaurant> searchByFilter(@RequestBody List<Integer> filteredValue){
+    public HashSet<Restaurant> searchByFilter(@RequestBody List<Integer> filteredValue){
 
-        // ***findByResNameContains 부분 수정하기***
-        List<Restaurant> resFilterList=restaurantRepository.findByResNameContains("");
-
-        if(resFilterList.isEmpty()){
-            throw new ResNotFoundException(String.format("[%s] not found", filteredValue));
-        }
-
-        return resFilterList;
-    }
-
-
-/*
-    // 프론트에서 데이터 받기 Test(JSON)
-    // 현재 진행상황 : 프론트에서 배열로 정수들 받아서 문자열로 반환까지
-    // 이제 저 리스트 크기만큼 반복문 돌려서 쿼리문에 추가하면 됨 - 근데 동적쿼리 개어려움ㅜ
-    // 문자열 리스트 1개 -> 지역, 비건단계, 음식점종류 3개로 나눔
-    // 음식점 필터로 조회
-    @GetMapping("/restaurant/filter")
-    public List<String> searchByFilter(@RequestBody List<Integer> filteredValue){
+        List<Restaurant> resFilterListFinal=new ArrayList<>();
 
         List<String> resFilterListArea = new ArrayList<>();
         List<String> resFilterListLevel = new ArrayList<>();
         List<String> resFilterListType = new ArrayList<>();
+
+        HashSet<Restaurant> hashListArea=new HashSet<>();
+        HashSet<Restaurant> hashListLevel=new HashSet<>();
+        HashSet<Restaurant> hashListType=new HashSet<>();
+
+
         for(Integer i : filteredValue){
             if(i <= 24)
                 resFilterListArea.add(resFilterList[i]);
@@ -84,8 +73,41 @@ public class RestaurantJpaController {
                 resFilterListType.add(resFilterList[i]);
         }
 
-        return resFilterListLevel;
+        if(resFilterListArea.isEmpty()){
+            for(int i=0 ; i<=24 ; i++)
+                resFilterListArea.add(resFilterList[i]);
+        }
+        if(resFilterListLevel.isEmpty()){
+            for(int i=25 ; i<=31 ; i++)
+                resFilterListLevel.add(resFilterList[i]);
+        }
+        if(resFilterListType.isEmpty()){
+            for(int i=32 ; i<=41 ; i++)
+                resFilterListType.add(resFilterList[i]);
+        }
+
+
+        for(String str : resFilterListArea){
+            HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterArea(str);
+            hashListArea.addAll(hashTmp);
+        }
+
+        for(String str : resFilterListLevel){
+            HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterLevel(str);
+            hashListLevel.addAll(hashTmp);
+        }
+
+        for(String str : resFilterListType){
+            HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterType(str);
+            hashListType.addAll(hashTmp);
+        }
+
+        hashListArea.retainAll(hashListLevel);
+        hashListArea.retainAll(hashListType);
+
+        return hashListArea;
     }
-*/
+
+
 
 }
