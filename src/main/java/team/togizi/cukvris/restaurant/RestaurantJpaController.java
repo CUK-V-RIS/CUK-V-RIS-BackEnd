@@ -64,6 +64,7 @@ public class RestaurantJpaController {
         HashSet<Restaurant> hashListType=new HashSet<>();
 
 
+        // List<Integer>에 있는 값들 분류해서 String으로 변환
         for(Integer i : filteredValue){
             if(i <= 24)
                 resFilterListArea.add(resFilterList[i]);
@@ -73,6 +74,8 @@ public class RestaurantJpaController {
                 resFilterListType.add(resFilterList[i]);
         }
 
+
+        // List<String> 비어있으면 모든 값 넣기
         if(resFilterListArea.isEmpty()){
             for(int i=0 ; i<=24 ; i++)
                 resFilterListArea.add(resFilterList[i]);
@@ -87,21 +90,22 @@ public class RestaurantJpaController {
         }
 
 
+        // List에 있는 값들 하나씩 검색해서 HashSet에 합집합
         for(String str : resFilterListArea){
             HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterArea(str);
             hashListArea.addAll(hashTmp);
         }
-
         for(String str : resFilterListLevel){
             HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterLevel(str);
             hashListLevel.addAll(hashTmp);
         }
-
         for(String str : resFilterListType){
             HashSet<Restaurant> hashTmp=restaurantRepository.findRestaurantByFilterType(str);
             hashListType.addAll(hashTmp);
         }
 
+
+        // 3개의 HashSet 교집합
         hashListArea.retainAll(hashListLevel);
         hashListArea.retainAll(hashListType);
 
