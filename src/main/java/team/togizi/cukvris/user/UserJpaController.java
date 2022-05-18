@@ -51,7 +51,7 @@ public class UserJpaController {
 
         return ResponseEntity.created(location).build();
     }
-    // 회원 정보 수정
+    // 회원 정보 수정 (비건 레벨) + 로그인 이후 이거로 비건레벨 받으면 됨, 프론트에서 User로 묶어서 @RequestBody로 주면 됨
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -62,10 +62,10 @@ public class UserJpaController {
 
         User storedUser = optionalUser.get();
         ///수정할 정보 입력
-        storedUser.setUserId(user.getUserId());
-        storedUser.setUserPwd(user.getUserPwd());
+        //storedUser.setUserId(user.getUserId()); // 불변값
+        //storedUser.setUserPwd(user.getUserPwd()); // null
         storedUser.setVeganLevel(user.getVeganLevel());
-        storedUser.setEmail(user.getEmail());
+        //storedUser.setEmail(user.getEmail()); // 불변값
 
         User updatedUser = userRepository.save(storedUser);
 
