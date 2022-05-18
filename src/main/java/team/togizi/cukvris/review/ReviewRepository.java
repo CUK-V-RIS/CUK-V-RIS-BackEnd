@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
@@ -18,4 +19,13 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value="select count(rev) from review rev where rev.resIdx= :resIdx and rev.reviewCategory= :reviewCategory")
     Integer retrieveAllReviews(Integer resIdx, Integer reviewCategory);
 
+    /*
+    // del
+    @Query(value="delete from review rev where rev.resIdx= :resIdx and rev.userIdx= :userIdx")
+    void deleteReviewByResIdxAndUserIdx(Integer resIdx, Integer userIdx);
+    */
+
+    // resIdx, userIdx로 리뷰 찾기(return Review)
+    @Query(value="select rev from review rev where rev.resIdx= :resIdx and rev.userIdx= :userIdx")
+    Review findReviewByResIdxAndUserIdx(Integer resIdx, Integer userIdx);
 }

@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ import java.util.List;
 public class ReviewJpaController {
     @Autowired
     private ReviewRepository reviewRepository;
+
 
     // 공통 (1~6)        : 재료신선, 양 많, 맛있, 가격 착, 다음에도, 가성비 좋
     // 비건 (7~8)        : 선택지다양, 논비건과 함께
@@ -34,17 +36,29 @@ public class ReviewJpaController {
         return reviews;
     }
 
+
+
     // 키워드 리뷰 생성
-    /*
-    {
+    /* {
         "userIdx" : 1,
         "resIdx" : 100,
         "reviewCategory" : 8
-    }
-    */
+    } */
     // @Valid 이용 유효성 검사
     @PostMapping("/review")
-    public ResponseEntity<Review> createReview(@Valid @RequestBody Review review){
+    public String createReview(@Valid @RequestBody Review review){
+
+        Review tmpReview=reviewRepository.findReviewByResIdxAndUserIdx(review.getResIdx(), review.getUserIdx());
+
+        if(tmpReview==null){
+            reviewRepository.save(review);
+            return "리뷰가 저장되었습니다.";
+        }
+        else{
+            return "이미 작성한 리뷰가 존재합니다.";
+
+        }
+        /*
         Review savedReview=reviewRepository.save(review);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -54,8 +68,9 @@ public class ReviewJpaController {
 
         // 새로운 리뷰 생성되면 상태 코드에 200 OK 아닌 201 Created
         return ResponseEntity.created(location).build();
-
+        */
     }
+
 
 
     // 키워드 리뷰 조회
@@ -77,7 +92,22 @@ public class ReviewJpaController {
         return reviewCategory;
     }
 
-    // 키워드 리뷰 삭제
 
+
+    // 키워드 리뷰 삭제
+    @DeleteMapping("/{resIdx}/review/{userIdx}")
+    public String deleteReview(@PathVariable int resIdx, @PathVariable int userIdx){
+
+        Review review=reviewRepository.findReviewByResIdxAndUserIdx(resIdx, userIdx);
+
+        if(review==null){
+            return "작성한 리뷰가 없습니다.";
+        }
+        else{
+            reviewRepository.delete(review);
+            return "리뷰가 삭제되었습니다.";
+        }
+
+    }
 
 }
